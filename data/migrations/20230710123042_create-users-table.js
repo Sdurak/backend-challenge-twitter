@@ -33,7 +33,7 @@ exports.up = function (knex) {
       tbl.dateTime("created_at").defaultTo(knex.fn.now());
       tbl.string("content").notNullable();
       tbl
-        .integer("user_id")
+        .integer("user_id") ///burayı diğer tabloyla ilişkilendirmek için aldık
         .references("user_id")
         .inTable("Users")
         .onDelete("RESTRICT");
