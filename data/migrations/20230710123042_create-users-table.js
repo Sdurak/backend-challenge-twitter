@@ -45,13 +45,10 @@ exports.up = function (knex) {
     })
     .createTable("Relations", (tbl) => {
       tbl.increments("relation_id");
+      tbl.integer("following_id");
+      tbl.integer("follower_id");
       tbl
-        .integer("following_id")
-        .references("user_id")
-        .inTable("Users")
-        .onDelete("RESTRICT");
-      tbl
-        .integer("follower_id")
+        .integer("user_id")
         .references("user_id")
         .inTable("Users")
         .onDelete("RESTRICT");

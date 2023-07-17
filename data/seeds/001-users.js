@@ -15,6 +15,7 @@ const defaultUsers = [
     first_name: "segah",
     last_name: "durak",
     password: 1234,
+    role_id: 2,
   },
   {
     user_id: 2,
@@ -23,6 +24,7 @@ const defaultUsers = [
     first_name: "gülin",
     last_name: "yardımoğlu",
     password: 4321,
+    role_id: 1,
   },
   {
     user_id: 3,
@@ -31,6 +33,7 @@ const defaultUsers = [
     first_name: "ılgın",
     last_name: "ökdem",
     password: 4444,
+    role_id: 1,
   },
 ];
 

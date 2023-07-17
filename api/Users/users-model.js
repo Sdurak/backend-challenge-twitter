@@ -2,8 +2,8 @@ const db = require("../../data/db-config");
 
 const getAll = () => {
   return db("Users as u")
-    .leftjoin("Roles as r", "u.role_id", "r.role_id")
-    .leftjoin("Relations as re", "u.user_id", "f.user_id")
+    .leftJoin("Roles as r", "u.role_id", "r.role_id")
+    .leftJoin("Relations as re", "u.user_id", "re.user_id")
     .select(
       "u.user_id",
       "u.user_name",
@@ -20,8 +20,8 @@ const getAll = () => {
 
 async function getById(user_id) {
   const user = await db("Users as u")
-    .leftjoin("Roles as r", "u.role_id", "r.role_id")
-    .leftjoin("Relations as re", "u.user_id", "f.user_id")
+    .leftJoin("Roles as r", "u.role_id", "r.role_id")
+    .leftJoin("Relations as re", "u.user_id", "re.user_id")
     .select(
       "u.user_id",
       "u.user_name",
@@ -40,8 +40,8 @@ async function getById(user_id) {
 }
 async function getByFilter(filter) {
   const filtered = await db("Users as u")
-    .leftjoin("Roles as r", "u.role_id", "r.role_id")
-    .leftjoin("Relations as re", "u.user_id", "f.user_id")
+    .leftJoin("Roles as r", "u.role_id", "r.role_id")
+    .leftJoin("Relations as re", "u.user_id", "re.user_id")
     .select(
       "u.user_id",
       "u.user_name",
@@ -57,6 +57,9 @@ async function getByFilter(filter) {
     .where(filter);
   return filtered;
 }
+const getByName = (user_name) => {
+  return db("Users").where({ user_name: user_name }).first();
+};
 
 const create = async (newUser) => {
   let [user_id] = await db("Users").insert(newUser);
@@ -72,4 +75,12 @@ const remove = async (user_id) => {
   return await db("Users").where({ user_id: user_id }).delete();
 };
 
-module.exports = { getAll, getByFilter, getById, create, update, remove };
+module.exports = {
+  getAll,
+  getByFilter,
+  getById,
+  getByName,
+  create,
+  update,
+  remove,
+};
