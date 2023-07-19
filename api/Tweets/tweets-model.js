@@ -2,8 +2,8 @@ const db = require("../../data/db-config");
 
 const getAll = () => {
   return db("Tweets as t")
-    .leftjoin("Users as u", "u.user_id", "t.user_id")
-    .leftjoin("Type as ty", "t.type_id", "ty.type_id")
+    .leftJoin("Users as u", "u.user_id", "t.user_id")
+    .leftJoin("Type as ty", "t.type_id", "ty.type_id")
     .select(
       "u.user_id",
       "u.user_name",
@@ -17,8 +17,8 @@ const getAll = () => {
 
 async function getById(tweet_id) {
   const tweet = await db("Tweets as t")
-    .leftjoin("Users as u", "u.user_id", "t.user_id")
-    .leftjoin("Type as ty", "t.type_id", "ty.type_id")
+    .leftJoin("Users as u", "u.user_id", "t.user_id")
+    .leftJoin("Type as ty", "t.type_id", "ty.type_id")
     .select(
       "u.user_id",
       "u.user_name",
@@ -34,8 +34,8 @@ async function getById(tweet_id) {
 }
 async function getByFilter(filter) {
   const filtered = await db("Tweets as t")
-    .leftjoin("Users as u", "u.user_id", "t.user_id")
-    .leftjoin("Type as ty", "t.type_id", "ty.type_id")
+    .leftJoin("Users as u", "u.user_id", "t.user_id")
+    .leftJoin("Type as ty", "t.type_id", "ty.type_id")
     .select(
       "u.user_id",
       "u.user_name",

@@ -22,4 +22,23 @@ module.exports = {
       },
     },
   },
+
+  testing: {
+    client: "sqlite3",
+    connection: {
+      filename: "./data/testing.db3",
+    },
+    migrations: {
+      directory: "./data/migrations",
+    },
+    seeds: {
+      directory: "./data/seeds",
+    },
+    useNullAsDefault: true,
+    pool: {
+      afterCreate: (conn, done) => {
+        conn.run("PRAGMA foreign_keys = ON", done);
+      },
+    },
+  },
 };

@@ -24,8 +24,8 @@ router.get("/:user_id", mw.isIdExist, async (req, res, next) => {
 router.delete("/:user_id", mw.isIdExist, async (req, res, next) => {
   try {
     const { user_id } = req.params;
-    const count = await userModel.remove(user_id);
-    if (count) {
+    const account = await userModel.remove(user_id);
+    if (account) {
       res.json({ message: `User id ${user_id}, deleted...` });
     } else {
       res
