@@ -1,5 +1,5 @@
-const userModel = require("../api/Users/users-model");
-const db = require("../data/db-config");
+const userModel = require("./api/Users/users-model");
+const db = require("./data/db-config");
 
 const newUser = {
   first_name: "abuzer",
