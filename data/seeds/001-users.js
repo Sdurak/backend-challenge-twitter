@@ -60,12 +60,15 @@ const defaultRelations = [
 ];
 
 exports.seed = async function (knex) {
-  // Deletes ALL existing entries
+  await knex.raw("PRAGMA foreign_keys = OFF");
+
   await knex("Roles").truncate();
   await knex("Users").truncate();
   await knex("Type").truncate();
   await knex("Tweets").truncate();
   await knex("Relations").truncate();
+
+  await knex.raw("PRAGMA foreign_keys = ON");
 
   await knex("Roles").insert(defaultRoles);
   await knex("Users").insert(defaultUsers);

@@ -2,31 +2,21 @@ const jwt = require("jsonwebtoken");
 const { HASH_ROUND, JWT_SECRET } = require("../../config/index");
 const userModel = require("../Users/users-model");
 const bcryptjs = require("bcryptjs");
-const redis = require("redis");
-const client = redis.createClient();
+const authModel = require("../Auth/auth-model");
 
-client.on("error", (err) => {
-  console.error("Redis Error:", err);
-});
-
-const restricted = async (req, res, next) => {
+const restricted = (req, res, next) => {
   try {
     const token = req.headers.authorization;
     if (token) {
-      const tokenValue = await client.get(token);
-      if (tokenValue) {
-        jwt.verify(token, JWT_SECRET, (err, decodedJWT) => {
-          //decodedJWT hashlenmiş
-          if (!err) {
-            req.decodedUser = decodedJWT;
-            next();
-          } else {
-            next(err);
-          }
-        });
-      } else {
-        next({ status: 403, message: "Token is expired!..." });
-      }
+      jwt.verify(token, JWT_SECRET, (err, decodedJWT) => {
+        //decodedJWT hashlenmiş
+        if (!err) {
+          req.decodedUser = decodedJWT;
+          next();
+        } else {
+          next(err);
+        }
+      });
     } else {
       next({ status: 400, message: "Token is required!..." });
     }
@@ -49,14 +39,24 @@ const generateToken = async (req, res, next) => {
       email: user.email,
     };
     const options = {
-      expiresIN: "2h",
+      expiresIn: "2h",
     };
     const token = jwt.sign(payload, JWT_SECRET, options);
     req.user.token = token;
-    await client.set(token, 1, { EX: 60 * 60 * 2 });
     next();
   } catch (err) {
     next(err);
+  }
+};
+
+const isEmailExist = async (req, res, next) => {
+  const { email } = req.body;
+  const user = await authModel.getByFilter({ "u.email": email });
+  if (user.length === 0) {
+    next({ status: 401, message: "Invalid credentials!.." });
+  } else {
+    req.user = user[0];
+    next();
   }
 };
 
@@ -85,11 +85,23 @@ const checkUserName = async (req, res, next) => {
   }
 };
 
-const passwordCheck = async (req, res, next) => {
-  if (bcryptjs.compareSync(req.body.password, req.user.password)) {
-    next();
-  } else {
-    next({ status: 401, message: "Invalid credentials!.." });
+const passwordCheck = (req, res, next) => {
+  try {
+    if (!req.user) {
+      next({ status: 401, message: "Invalid credentials!.." });
+      return;
+    }
+    const isPasswordValid = bcryptjs.compareSync(
+      req.body.password,
+      req.user.password
+    );
+    if (isPasswordValid) {
+      next();
+    } else {
+      next({ status: 401, message: "Invalid credentials!.." });
+    }
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -107,15 +119,9 @@ const logout = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
     if (token) {
-      const tokenValue = await client.get(token);
-      if (tokenValue) {
-        await client.del(token);
-        next();
-      } else {
-        next({ status: 403, message: "Token is already expired!..." });
-      }
+      next();
     } else {
-      next({ status: 403, message: "Token is required to log out!..." });
+      next({ status: 403, message: "Token is already expired!..." });
     }
   } catch (err) {
     next(err);
@@ -131,4 +137,5 @@ module.exports = {
   hashPassword,
   logout,
   passwordCheck,
+  isEmailExist,
 };
